@@ -59,13 +59,15 @@ int main(){
 
         listaEncadeada *tempL = new listaEncadeada;
         tempL->avaliacao = stof(buffer);
+        tempL->prox = NULL;
         rank.rat = tempL;
         rank.prox = NULL;
 
         chave = calculaChave(rank.ID, tamanhoR);
 
-        rating *novo = new rating;
+        rating *novo;
         if(tabelaRating[chave] == NULL){                //se vazio, posição da tabela = ponteiro para novo rating
+            novo = new rating;
             novo->ID = rank.ID;
             novo->rat = rank.rat;
             novo->prox = NULL;
@@ -80,15 +82,16 @@ int main(){
                     f = true;
                     percorre = novo->rat;
                     novo->numAvaliacoes += 1;
-                    do{
+                    while(percorre->prox != NULL){
                         percorre = percorre->prox;
-                    }while(percorre->prox != NULL);
-                    percorre->prox = rank->rat;
+                    }
+                    percorre->prox = tempL;
                 }
                 novo = novo->prox;
             }
             // TODO: MODIFICAR A TABELA HASH DOS RATINGS PARA SEREM A MEDIA DO RATING CADA JOGADOR
             if(f == false){
+                novo = new rating;
                 novo->ID = rank.ID;
                 novo->rat = rank.rat;
                 novo->prox = tabelaRating[chave];
