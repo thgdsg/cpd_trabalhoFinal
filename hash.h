@@ -28,16 +28,16 @@ struct jogador{
     jogador *prox;
 };
 
+struct listaEncadeada{
+    float avaliacao;
+    listaEncadeada *prox;
+};
+
 struct rating{
     int ID;
     int numAvaliacoes = 0;
     listaEncadeada *rat;
     rating *prox;
-};
-
-struct listaEncadeada{
-    float avaliacao;
-    listaEncadeada *prox;
 };
 
 // Returns new trie node (initialized to NULLs)
