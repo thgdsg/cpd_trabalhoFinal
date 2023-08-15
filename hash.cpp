@@ -86,6 +86,7 @@ int main(){
                         percorre = percorre->prox;
                     }
                     percorre->prox = tempL;
+                    //cout << tempL->avaliacao << endl;
                 }
                 novo = novo->prox;
             }
@@ -101,23 +102,30 @@ int main(){
     }
 
     cout << "Criando trie para os nomes!" << endl;
-    regex r("\\s");
+    const regex AZ("[^abcdefghijklmnopqrstuvwxyz]");
     string name;
     for (int i = 0; i < tamanhoM; i++) {
         if (tabelaJog[i] != NULL){
             jogador *j = tabelaJog[i];
-            while (j->prox != NULL){
+            while (j != NULL){
                 name = j->nome;
                 transform(name.begin(), name.end(), name.begin(), ::tolower);
-                name = regex_replace(name, r, "");
+                name = regex_replace(name, AZ, "");
                 insert(nomesPai, name, j->ID);
                 j = j->prox;
             }
         }
     }
 
-    int penis = search(nomesPai, "cristiano");
-    cout << name << endl;
+    int penis = search(nomesPai, "aleksanderfoosns");
     cout << penis << endl;
+    penis = search(nomesPai, "nicolaecarnat");
+    cout << penis << endl;
+    penis = search(nomesPai, "neymardasilvasantosjunior");
+    cout << penis << endl;
+    penis = search(nomesPai, "cristianoronaldodossantosaveiro");
+    cout << penis << endl;
+    
+
     return 0;
 }

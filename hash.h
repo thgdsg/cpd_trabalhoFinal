@@ -43,7 +43,7 @@ struct rating{
 // Returns new trie node (initialized to NULLs)
 struct NodoTrie *getNode(void)
 {
-    static struct NodoTrie *pNode =  new NodoTrie;
+    struct NodoTrie *pNode =  new NodoTrie;
  
     pNode->ehFim = false;
  
@@ -66,8 +66,9 @@ void insert(struct NodoTrie *root, string key, int num)
         if (!pCrawl->filho[index])
             pCrawl->filho[index] = getNode();
         pCrawl = pCrawl->filho[index];
+        //cout << key[i];
     }
- 
+    //cout << endl;
     // mark last node as leaf
     pCrawl->ehFim = true;
     pCrawl->ID = num;
@@ -83,8 +84,7 @@ int search(struct NodoTrie *root, string key)
     {
         int index = key[i] - 'a';
         if (!pCrawl->filho[index])
-            return pCrawl->ID;
- 
+            return 0;
         pCrawl = pCrawl->filho[index];
     }
 
