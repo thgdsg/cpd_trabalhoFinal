@@ -8,7 +8,7 @@ int main(){
     rating rank;
     NodoTrie *nomesPai = getNode();
     int tamanhoM, tamanhoR, chave, temp;
-    int min = 0, max = 0, media = 0, vazio = 0;
+    int min = 0, max = 0;
     int media2 = 0, encontrados = 0, total = 0;
     bool f = false;
     listaEncadeada *percorre;
@@ -51,7 +51,7 @@ int main(){
     rating *tabelaRating[tamanhoR] = {NULL};
 
     getline(rate, buffer);
-    cout << "Criando tabela hash para os ratings!" << endl;
+    cout << "Criando tabela hash para a media dos ratings!" << endl;
     while(getline(rate, buffer, ',')){
         getline(rate, buffer, ',');
         rank.ID = stoi(buffer);
@@ -77,16 +77,20 @@ int main(){
             temp = rank.ID;
             novo = tabelaRating[chave];
             // Checando pra ver se ja existe rating do jogador
-            while(novo->prox != NULL){
+            while(novo != NULL){
                 if(novo->ID == temp){
                     f = true;
-                    percorre = novo->rat;
                     novo->numAvaliacoes += 1;
-                    while(percorre->prox != NULL){
+                    tempL->prox = novo->rat;
+                    novo->rat = tempL;
+
+
+                    /*percorre = tempL;
+                    while(percorre != NULL){
+                        cout << percorre->avaliacao << " ";
                         percorre = percorre->prox;
                     }
-                    percorre->prox = tempL;
-                    //cout << tempL->avaliacao << endl;
+                    cout << endl;*/
                 }
                 novo = novo->prox;
             }
@@ -97,6 +101,27 @@ int main(){
                 novo->rat = rank.rat;
                 novo->prox = tabelaRating[chave];
                 tabelaRating[chave] = novo;
+            }
+            f = false;
+        }
+    }
+
+    // Transformando numa tabela hash de media de ratings
+    double mediaRank = 0;
+    for (int i = 0; i < tamanhoR; i++) {
+        if (tabelaRating[i] != NULL){
+            rating *R = tabelaRating[i];
+            while (R != NULL){
+                listaEncadeada *newList = new listaEncadeada;
+                newList->prox = NULL;
+                while(R->rat != NULL){
+                    mediaRank = mediaRank + R->rat->avaliacao;
+                    R->rat = R->rat->prox;
+                }
+                newList->avaliacao = (float)(mediaRank / R->numAvaliacoes);
+                R->rat = newList;
+                R = R->prox;
+                mediaRank = 0;
             }
         }
     }
@@ -126,6 +151,6 @@ int main(){
     penis = search(nomesPai, "cristianoronaldodossantosaveiro");
     cout << penis << endl;
     
-
+    buscaRating(231747, tabelaRating, tamanhoR);
     return 0;
 }

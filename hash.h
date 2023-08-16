@@ -35,7 +35,7 @@ struct listaEncadeada{
 
 struct rating{
     int ID;
-    int numAvaliacoes = 0;
+    int numAvaliacoes = 1;
     listaEncadeada *rat;
     rating *prox;
 };
@@ -111,4 +111,17 @@ ifstream& abreArq(string arqnome){
 int calculaChave(int ID, int tamanho){
     int i = ((int)pow((ID / 1000), 2.0) + ID) % tamanho;
     return i;
+}
+
+void buscaRating(int ID, rating *tabela[], int tamanho){
+    int chave = calculaChave(ID, tamanho);
+    rating *percorre = tabela[chave];
+    while(percorre->ID != ID || percorre != NULL){
+        if(percorre->ID == ID){
+            cout << percorre->ID << "," << percorre->numAvaliacoes << "," << percorre->rat->avaliacao << endl;
+        }
+        percorre = percorre->prox;
+    }
+    if(percorre == NULL)
+        cout << "valor nao encontrado" << endl;
 }
