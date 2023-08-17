@@ -30,6 +30,8 @@ struct jogador{
 
 struct listaEncadeada{
     float avaliacao;
+    // APENAS UTILIZAR ID NA HORA DE MANIPULAR USUARIO!
+    int ID = 0;
     listaEncadeada *prox;
 };
 
@@ -38,6 +40,13 @@ struct rating{
     int numAvaliacoes = 1;
     listaEncadeada *rat;
     rating *prox;
+};
+
+struct usuario{
+    int UID;
+    int totalAvaliacoes = 1;
+    listaEncadeada *ratings;
+    usuario *prox;
 };
 
 // Returns new trie node (initialized to NULLs)
@@ -116,7 +125,7 @@ int calculaChave(int ID, int tamanho){
 void buscaRating(int ID, rating *tabela[], int tamanho){
     int chave = calculaChave(ID, tamanho);
     rating *percorre = tabela[chave];
-    while(percorre->ID != ID || percorre != NULL){
+    while(percorre != NULL || percorre->ID != ID){
         if(percorre->ID == ID){
             cout << percorre->ID << "," << percorre->numAvaliacoes << "," << percorre->rat->avaliacao << endl;
         }
@@ -124,4 +133,25 @@ void buscaRating(int ID, rating *tabela[], int tamanho){
     }
     if(percorre == NULL)
         cout << "valor nao encontrado" << endl;
+}
+
+void buscaUser(int UID, usuario *tabela[], int tamanho){
+    int chave = calculaChave(UID, tamanho);
+    usuario *percorre = tabela[chave];
+    listaEncadeada *percorredor;
+    bool f = false;
+    while(percorre != NULL){
+        percorredor = percorre->ratings;
+        if(percorre->UID == UID){
+            f = true;
+            cout << percorre->UID << "," << percorre->totalAvaliacoes << endl;
+            while(percorredor != NULL){
+                cout << percorredor->avaliacao << "," << percorredor->ID << endl;
+                percorredor = percorredor->prox;
+            }
+        }
+        percorre = percorre->prox;
+    }
+    if(f == false)
+        cout << "usuario nao encontrado" << endl;
 }

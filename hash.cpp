@@ -7,16 +7,15 @@ int main(){
     jogador player;
     rating rank;
     NodoTrie *nomesPai = getNode();
-    int tamanhoM, tamanhoR, chave, temp;
-    int min = 0, max = 0;
-    int media2 = 0, encontrados = 0, total = 0;
+    int tamanhoM, tamanhoR, tamanhoU, chave, temp;
+    int chaveU, keyU;
     bool f = false;
     listaEncadeada *percorre;
 
     tamanhoM = 10000;
     jogador *tabelaJog[tamanhoM] = {NULL};
 
-    ifstream &rate = abreArq("minirating.csv");
+    ifstream &rate = abreArq("rating.csv");
     ifstream &tags = abreArq("tags.csv");
     ifstream &jogadores = abreArq("players.csv");
     ofstream saidapadrao ("tabelafinal.txt", ios_base::out|ios_base::trunc);
@@ -48,11 +47,14 @@ int main(){
 
     // Criando uma tabela hash para o rating dos jogadores
     tamanhoR = 10000;
+    tamanhoU = 10000;
     rating *tabelaRating[tamanhoR] = {NULL};
+    usuario *tabelaUsuario[tamanhoU] = {NULL};
 
     getline(rate, buffer);
-    cout << "Criando tabela hash para a media dos ratings!" << endl;
+    cout << "Criando tabela hash para a media dos ratings e para os usuarios!" << endl;
     while(getline(rate, buffer, ',')){
+        chaveU = stoi(buffer);
         getline(rate, buffer, ',');
         rank.ID = stoi(buffer);
         getline(rate, buffer, '\n');
@@ -76,7 +78,7 @@ int main(){
         else{
             temp = rank.ID;
             novo = tabelaRating[chave];
-            // Checando pra ver se ja existe rating do jogador
+            // Checando pra ver se ja foi processado algum rating desse usuario
             while(novo != NULL){
                 if(novo->ID == temp){
                     f = true;
@@ -104,6 +106,44 @@ int main(){
             }
             f = false;
         }
+        // criando hash de usuarios
+        keyU = calculaChave(chaveU, tamanhoU);
+        listaEncadeada *ratingsUser = new listaEncadeada;
+        ratingsUser->avaliacao = rank.rat->avaliacao;
+        ratingsUser->ID = rank.ID;
+        ratingsUser->prox = NULL;
+        usuario *newUser;
+        if(tabelaUsuario[keyU] == NULL){                //se vazio, posição da tabela = ponteiro para novo usuario
+            newUser = new usuario;
+            newUser->UID = chaveU;
+            newUser->ratings = ratingsUser;
+            newUser->prox = NULL;
+            tabelaUsuario[keyU] = newUser;
+        }
+        else{
+            newUser = tabelaUsuario[keyU];
+            // Checando pra ver se ja existe rating do jogador
+            while(newUser != NULL){
+                if(newUser->UID == chaveU){
+                    f = true;
+                    newUser->totalAvaliacoes += 1;
+                    ratingsUser->prox = newUser->ratings;
+                    newUser->ratings = ratingsUser;
+
+                }
+                newUser = newUser->prox;
+            }
+            // TODO: MODIFICAR A TABELA HASH DOS RATINGS PARA SEREM A MEDIA DO RATING CADA JOGADOR
+            if(f == false){
+                newUser = new usuario;
+                newUser->UID = chaveU;
+                newUser->ratings = ratingsUser;
+                newUser->prox = tabelaUsuario[keyU];
+                tabelaUsuario[keyU] = newUser;
+            }
+            f = false;
+        }
+        //cout << newUser->UID << "," << newUser->totalAvaliacoes << endl;
     }
 
     // Transformando numa tabela hash de media de ratings
@@ -142,15 +182,17 @@ int main(){
         }
     }
 
-    int penis = search(nomesPai, "aleksanderfoosns");
-    cout << penis << endl;
-    penis = search(nomesPai, "nicolaecarnat");
-    cout << penis << endl;
-    penis = search(nomesPai, "neymardasilvasantosjunior");
-    cout << penis << endl;
-    penis = search(nomesPai, "cristianoronaldodossantosaveiro");
-    cout << penis << endl;
+    int denis = search(nomesPai, "aleksanderfoosns");
+    cout << denis << endl;
+    denis = search(nomesPai, "nicolaecarnat");
+    cout << denis << endl;
+    denis = search(nomesPai, "neymardasilvasantosjunior");
+    cout << denis << endl;
+    denis = search(nomesPai, "cristianoronaldodossantosaveiro");
+    cout << denis << endl;
     
+    buscaUser(11923, tabelaUsuario, tamanhoU);
     buscaRating(231747, tabelaRating, tamanhoR);
+    //buscaUser(11923, tabelaUsuario, tamanhoU);
     return 0;
 }
