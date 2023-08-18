@@ -121,10 +121,11 @@ int calculaChave(int ID, int tamanho){
 void buscaJogador(int ID, jogador *tabela[], int tamanho){
     int chave = calculaChave(ID, tamanho);
     jogador *percorre = tabela[chave];
-    while(percorre != NULL || percorre->ID != ID){
+    while(percorre != NULL){
         if(percorre->ID == ID){
             cout << percorre->ID << "," << percorre->numAvaliacoes << "," << percorre->ratings->avaliacao << endl;
             cout << percorre->ID << "," << percorre->nome << "," << percorre->dados << endl;
+            break;
         }
         percorre = percorre->prox;
     }

@@ -172,6 +172,7 @@ int main(){
     buscaUser(11923, tabelaUsuario, tamanhoU);
     cout << "BUSCA JOGADOR: ";
     buscaJogador(231747, tabelaJog, tamanhoM);
-    //buscaUser(11923, tabelaUsuario, tamanhoU);
+    cout << "BUSCA USER: ";
+    buscaUser(1445, tabelaUsuario, tamanhoU);
     return 0;
 }
