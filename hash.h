@@ -21,13 +21,6 @@ struct NodoTrie
      int ID = 0;
 }; 
 
-struct jogador{
-    int ID;
-    string nome;
-    string dados;
-    jogador *prox;
-};
-
 struct listaEncadeada{
     float avaliacao;
     // APENAS UTILIZAR ID NA HORA DE MANIPULAR USUARIO!
@@ -35,11 +28,14 @@ struct listaEncadeada{
     listaEncadeada *prox;
 };
 
-struct rating{
+struct jogador{
     int ID;
-    int numAvaliacoes = 1;
-    listaEncadeada *rat;
-    rating *prox;
+    int numAvaliacoes = 0;
+
+    listaEncadeada *ratings = NULL;
+    string nome;
+    string dados;
+    jogador *prox;
 };
 
 struct usuario{
@@ -122,6 +118,21 @@ int calculaChave(int ID, int tamanho){
     return i;
 }
 
+void buscaJogador(int ID, jogador *tabela[], int tamanho){
+    int chave = calculaChave(ID, tamanho);
+    jogador *percorre = tabela[chave];
+    while(percorre != NULL || percorre->ID != ID){
+        if(percorre->ID == ID){
+            cout << percorre->ID << "," << percorre->numAvaliacoes << "," << percorre->ratings->avaliacao << endl;
+            cout << percorre->ID << "," << percorre->nome << "," << percorre->dados << endl;
+        }
+        percorre = percorre->prox;
+    }
+    if(percorre == NULL)
+        cout << "valor nao encontrado" << endl;
+}
+
+/* NAO UTILIZAR
 void buscaRating(int ID, rating *tabela[], int tamanho){
     int chave = calculaChave(ID, tamanho);
     rating *percorre = tabela[chave];
@@ -133,7 +144,7 @@ void buscaRating(int ID, rating *tabela[], int tamanho){
     }
     if(percorre == NULL)
         cout << "valor nao encontrado" << endl;
-}
+}*/
 
 void buscaUser(int UID, usuario *tabela[], int tamanho){
     int chave = calculaChave(UID, tamanho);
