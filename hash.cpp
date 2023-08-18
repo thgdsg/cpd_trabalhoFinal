@@ -3,6 +3,7 @@
 using namespace std;
 
 int main(){
+    // Declarando variáveis que serão utilizadas ao construir as estruturas de dados
     string buffer;
     jogador player;
     NodoTrie *nomesPai = getNode();
@@ -11,19 +12,21 @@ int main(){
     bool f = false;
     listaEncadeada *percorre;
 
+    // Criando a tabela hash dos jogadores
     tamanhoM = 10000;
     jogador *tabelaJog[tamanhoM] = {NULL};
 
-    ifstream &rate = abreArq("minirating.csv");
+    // Abrindo os arquivos necessários
+    ifstream &rate = abreArq("rating.csv");
     ifstream &tags = abreArq("tags.csv");
     ifstream &jogadores = abreArq("players.csv");
-    ofstream saidapadrao ("tabelafinal.txt", ios_base::out|ios_base::trunc);
 
     const regex aspas("[\"]");
     // Criando uma tabela hash para os jogadores
     getline(jogadores, buffer);
     cout << "Criando tabela hash para os jogadores!" << endl;
     while(getline(jogadores, buffer, ',')){
+        // Pega as informações da linha conforme o modelo dos dados "sofifa_id,name,player_positions"
         player.ID = stoi(buffer);                   //passa as informações do jogador para uma variavel auxiliar
         getline(jogadores, player.nome, ',');
         getline(jogadores, buffer, '\n');
@@ -33,6 +36,7 @@ int main(){
         
         chave = calculaChave(player.ID, tamanhoM);
 
+        // Cria um jogador novo para inserir na tabela hash
         jogador *novo = new jogador;
         novo->ID = player.ID;
         novo->nome = player.nome;
@@ -47,8 +51,8 @@ int main(){
         }
     }
 
-    // Adicionando o rating dos jogadores na tabela hash
-    tamanhoU = 10000;
+    // Adicionando o rating dos jogadores na tabela hash associada ao ID de cada jogador, e criando uma tabela hash nova para os usuários
+    tamanhoU = 30000;
     jogador *percorreTabela;
     int avaliacao;
     usuario *tabelaUsuario[tamanhoU] = {NULL};
@@ -61,6 +65,7 @@ int main(){
         player.ID = stoi(buffer);
         getline(rate, buffer, '\n');
 
+        // Criando uma lista encadeada de avaliações para associar a cada jogador
         listaEncadeada *tempL = new listaEncadeada;
         tempL->avaliacao = stof(buffer);
         tempL->prox = NULL;
@@ -69,12 +74,15 @@ int main(){
 
         chave = calculaChave(player.ID, tamanhoM);
         percorreTabela = tabelaJog[chave];
+        // Busca na tabela pelo ID de cada jogador
         while(percorreTabela->ID != player.ID)
             percorreTabela = percorreTabela->prox;
         
         percorreTabela->numAvaliacoes += 1;
+        // Se o jogador não possui ratings, o nodo da lista é diretamente associado ao jogador
         if(percorreTabela->ratings == NULL)
             percorreTabela->ratings = player.ratings;
+        // Se o jogador possui ratings, o nodo da lista se torna o topo da lista de ratings do jogador
         else{
             player.ratings->prox = percorreTabela->ratings;
             percorreTabela->ratings = player.ratings;
@@ -95,7 +103,7 @@ int main(){
         }
         else{
             newUser = tabelaUsuario[keyU];
-            // Checando pra ver se ja existe rating do jogador
+            // Checando pra ver se ja existe rating associado ao usuario nessa posição da tabela
             while(newUser != NULL){
                 if(newUser->UID == chaveU){
                     f = true;
@@ -118,7 +126,7 @@ int main(){
         //cout << newUser->UID << "," << newUser->totalAvaliacoes << endl;
     }
 
-    // Transformando a tabela hash de ratings numa tabela hash de media de ratings, depois colocando como atributo do jogador
+    // Transformando a lista de ratings do jogador numa media de ratings total do jogador
     double mediaRank = 0;
     listaEncadeada *anteriorList;
     for (int i = 0; i < tamanhoM; i++) {
