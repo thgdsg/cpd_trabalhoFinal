@@ -1,5 +1,6 @@
 #include "hash.h"
 
+// Feito por Thomas Schneider Wiederkehr e Thiago dos Santos Goncalves
 using namespace std;
 
 int main(){
@@ -21,10 +22,13 @@ int main(){
     ifstream &tags = abreArq("tags.csv");
     ifstream &jogadores = abreArq("players.csv");
 
+    cout << "BEM VINDO A BUSCA DE BANCO DE DADOS DE JOGADORES FIFA2021!" << endl;
+    cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    cout << "Status:" << endl;
     const regex aspas("[\"]");
     // Criando uma tabela hash para os jogadores
     getline(jogadores, buffer);
-    cout << "Criando tabela hash para os jogadores!" << endl;
+    cout << "Criando tabela hash para os jogadores..." << endl;
     while(getline(jogadores, buffer, ',')){
         // Pega as informações da linha conforme o modelo dos dados "sofifa_id,name,player_positions"
         player.ID = stoi(buffer);                   //passa as informações do jogador para uma variavel auxiliar
@@ -58,7 +62,8 @@ int main(){
     usuario *tabelaUsuario[tamanhoU] = {NULL};
 
     getline(rate, buffer);
-    cout << "Criando tabela hash para os usuarios e adicionando os ratings na tabela hash dos jogadores!" << endl;
+    cout << "Criando tabela hash para os usuarios..." << endl;
+    cout << "Adicionando os ratings na tabela hash dos jogadores..." << endl;
     while(getline(rate, buffer, ',')){
         chaveU = stoi(buffer);
         getline(rate, buffer, ',');
@@ -126,6 +131,7 @@ int main(){
         //cout << newUser->UID << "," << newUser->totalAvaliacoes << endl;
     }
 
+    cout << "Adicionando a media dos ratings como atributos dos jogadores..." << endl;
     // Transformando a lista de ratings do jogador numa media de ratings total do jogador
     double mediaRank = 0;
     listaEncadeada *anteriorList;
@@ -144,14 +150,14 @@ int main(){
                 }
                 newList->avaliacao = (float)(mediaRank / P->numAvaliacoes);
                 P->ratings = newList;
-
+                
                 P = P->prox;
                 mediaRank = 0;
             }
         }
     }
 
-    cout << "Criando trie para os nomes!" << endl;
+    cout << "Criando trie para os nomes..." << endl;
     const regex AZ("[^abcdefghijklmnopqrstuvwxyz]");
     string name;
     for (int i = 0; i < tamanhoM; i++) {
@@ -167,6 +173,8 @@ int main(){
         }
     }
 
+    cout << "Processamento de dados finalizado!" << endl;
+    cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     int denis = search(nomesPai, "aleksanderfoosns");
     cout << denis << endl;
     denis = search(nomesPai, "nicolaecarnat");
@@ -176,11 +184,11 @@ int main(){
     denis = search(nomesPai, "cristianoronaldodossantosaveiro");
     cout << denis << endl;
     
-    cout << "BUSCA USER: ";
-    buscaUser(11923, tabelaUsuario, tamanhoU);
-    cout << "BUSCA JOGADOR: ";
+    cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    buscaUser(11923, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);
+    cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     buscaJogador(231747, tabelaJog, tamanhoM);
-    cout << "BUSCA USER: ";
-    buscaUser(1445, tabelaUsuario, tamanhoU);
+    cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    buscaUser(1445, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);
     return 0;
 }

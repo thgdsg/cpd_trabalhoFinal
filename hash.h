@@ -4,19 +4,16 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <vector>
-#include <cmath>
 #include <bits/stdc++.h>
 
 using namespace std;
 
 
-// Trie node 
+//  Nodo trie
 struct NodoTrie 
 { 
      struct NodoTrie *filho[26];
-     // isEndOfWord is true if the node 
-     // represents end of a word 
+     // ehFim eh uma flag que mostra se o nodo é o nodo final na trie
      bool ehFim;
      int ID = 0;
 }; 
@@ -45,55 +42,51 @@ struct usuario{
     usuario *prox;
 };
 
-// Returns new trie node (initialized to NULLs)
-struct NodoTrie *getNode(void)
-{
-    struct NodoTrie *pNode =  new NodoTrie;
+// Retorna um novo nodo da trie
+struct NodoTrie *getNode(){
+    struct NodoTrie *novo =  new NodoTrie;
  
-    pNode->ehFim = false;
+    novo->ehFim = false;
  
     for (int i = 0; i < 26; i++)
-        pNode->filho[i] = NULL;
+        novo->filho[i] = NULL;
  
-    return pNode;
+    return novo;
 }
  
-// If not present, inserts key into trie
-// If the key is prefix of trie node, just
-// marks leaf node
-void insert(struct NodoTrie *root, string key, int num)
+// Se o nodo não estiver presente, insere a KEY recebida na árvore trie
+// se a chave for o prefixo de uma outra palavra, marca o nodo da árvore
+void insert(struct NodoTrie *raiz, string key, int num)
 {
-    struct NodoTrie *pCrawl = root;
+    struct NodoTrie *novo = raiz;
  
     for (int i = 0; i < key.length(); i++)
     {
-        int index = key[i] - 'a';
-        if (!pCrawl->filho[index])
-            pCrawl->filho[index] = getNode();
-        pCrawl = pCrawl->filho[index];
+        int indice = key[i] - 'a';
+        if (!novo->filho[indice])
+            novo->filho[indice] = getNode();
+        novo = novo->filho[indice];
         //cout << key[i];
     }
     //cout << endl;
-    // mark last node as leaf
-    pCrawl->ehFim = true;
-    pCrawl->ID = num;
+    // define o a flag do último nodo como true
+    novo->ehFim = true;
+    novo->ID = num;
 }
  
-// Returns true if key presents in trie, else
-// false
-int search(struct NodoTrie *root, string key)
-{
-    struct NodoTrie *pCrawl = root;
+// retorna o ID do jogador caso encontre ele na trie, caso contrário, retorna 0
+int search(struct NodoTrie *raiz, string key){
+    struct NodoTrie *percorre = raiz;
  
     for (int i = 0; i < key.length(); i++)
     {
         int index = key[i] - 'a';
-        if (!pCrawl->filho[index])
+        if (!percorre->filho[index])
             return 0;
-        pCrawl = pCrawl->filho[index];
+        percorre = percorre->filho[index];
     }
 
-    return pCrawl->ID;
+    return percorre->ID;
 }
 
 ifstream& abreArq(string arqnome){
@@ -123,8 +116,11 @@ void buscaJogador(int ID, jogador *tabela[], int tamanho){
     jogador *percorre = tabela[chave];
     while(percorre != NULL){
         if(percorre->ID == ID){
-            cout << percorre->ID << "," << percorre->numAvaliacoes << "," << percorre->ratings->avaliacao << endl;
-            cout << percorre->ID << "," << percorre->nome << "," << percorre->dados << endl;
+            cout << "ID DO JOGADOR: " << percorre->ID << endl;
+            cout << "NOME DO JOGADOR: " << percorre->nome << endl;
+            cout << "POSICOES DO JOGADOR: " << percorre->dados << endl;
+            cout << "NUM DE AVALIACOES DO JOGADOR: " << percorre->numAvaliacoes << endl;
+            cout << "MEDIA DE AVALICOES DO JOGADOR: " << percorre->ratings->avaliacao << endl;
             break;
         }
         percorre = percorre->prox;
@@ -133,32 +129,21 @@ void buscaJogador(int ID, jogador *tabela[], int tamanho){
         cout << "valor nao encontrado" << endl;
 }
 
-/* NAO UTILIZAR
-void buscaRating(int ID, rating *tabela[], int tamanho){
-    int chave = calculaChave(ID, tamanho);
-    rating *percorre = tabela[chave];
-    while(percorre != NULL || percorre->ID != ID){
-        if(percorre->ID == ID){
-            cout << percorre->ID << "," << percorre->numAvaliacoes << "," << percorre->rat->avaliacao << endl;
-        }
-        percorre = percorre->prox;
-    }
-    if(percorre == NULL)
-        cout << "valor nao encontrado" << endl;
-}*/
-
-void buscaUser(int UID, usuario *tabela[], int tamanho){
-    int chave = calculaChave(UID, tamanho);
-    usuario *percorre = tabela[chave];
+void buscaUser(int UID, usuario *tabelaU[], jogador *tabelaJ[], int tamanhoU, int tamanhoJ){
+    int chave = calculaChave(UID, tamanhoU);
+    usuario *percorre = tabelaU[chave];
     listaEncadeada *percorredor;
     bool f = false;
     while(percorre != NULL){
         percorredor = percorre->ratings;
         if(percorre->UID == UID){
             f = true;
-            cout << percorre->UID << "," << percorre->totalAvaliacoes << endl;
+            cout << "ID DO USUARIO: " << percorre->UID << endl;
+            cout << "NUM DE AVALICOES DO USUARIO: " << percorre->totalAvaliacoes << endl;
+            cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+            cout << "JOGADORES QUE O USUARIO AVALIOU: " << endl;
             while(percorredor != NULL){
-                cout << percorredor->avaliacao << "," << percorredor->ID << endl;
+                buscaJogador(percorredor->ID, tabelaJ, tamanhoJ);
                 percorredor = percorredor->prox;
             }
         }
