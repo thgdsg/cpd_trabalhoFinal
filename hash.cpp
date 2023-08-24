@@ -19,7 +19,7 @@ int main(){
     jogador *tabelaJog[tamanhoM] = {NULL};
 
     // Abrindo os arquivos necessários
-    ifstream &rate = abreArq("minirating.csv");
+    ifstream &rate = abreArq("rating.csv");
     ifstream &tags = abreArq("tags.csv");
     ifstream &jogadores = abreArq("players.csv");
 

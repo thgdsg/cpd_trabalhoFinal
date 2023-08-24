@@ -239,8 +239,10 @@ void buscaUser(int UID, usuario *tabelaU[], jogador *tabelaJ[], int tamanhoU, in
 }
 
 void search_all(NodoTrie *root, jogador *tabela[], int tamanho){
-    if (root->ehFim)
+    if (root->ehFim){
+        cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
         buscaJogador(root->ID, tabela, tamanho);
+    }
     for (int i = 0; i < 26; i++){
         if (root->filho[i])
             search_all(root->filho[i], tabela, tamanho);
