@@ -8,6 +8,7 @@ int main(){
     string buffer;
     jogador player;
     NodoTrie *nomesPai = getNode();
+    NodoTrie2 *trieTags = getNode2();
     int tamanhoM, tamanhoU, chave, temp;
     int chaveU, keyU;
     bool f = false;
@@ -18,7 +19,7 @@ int main(){
     jogador *tabelaJog[tamanhoM] = {NULL};
 
     // Abrindo os arquivos necessários
-    ifstream &rate = abreArq("rating.csv");
+    ifstream &rate = abreArq("minirating.csv");
     ifstream &tags = abreArq("tags.csv");
     ifstream &jogadores = abreArq("players.csv");
 
@@ -173,22 +174,63 @@ int main(){
         }
     }
 
+    cout << "Criando trie para as tags..." << endl;
+    string tag;
+    getline(tags, buffer);
+    while (getline(tags, buffer, ',')){
+        getline(tags, buffer, ',');
+        int id = stoi(buffer);
+        getline(tags, tag, '\n');
+        transform(tag.begin(), tag.end(), tag.begin(), ::tolower);
+        tag = regex_replace(tag, AZ, "");
+        insert2(trieTags, tag, id);
+    }
     cout << "Processamento de dados finalizado!" << endl;
-    cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-    int denis = search(nomesPai, "aleksanderfoosns");
-    cout << denis << endl;
-    denis = search(nomesPai, "nicolaecarnat");
-    cout << denis << endl;
-    denis = search(nomesPai, "neymardasilvasantosjunior");
-    cout << denis << endl;
-    denis = search(nomesPai, "cristianoronaldodossantosaveiro");
-    cout << denis << endl;
     
     cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-    buscaUser(11923, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);
+    /*buscaUser(11923, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);
     cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     buscaJogador(231747, tabelaJog, tamanhoM);
     cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-    buscaUser(1445, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);
+    buscaUser(1445, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);*/
+
+    bool saida = false;
+    string entrada, comando, bufferEntrada, dados;
+    int pos;
+    const regex maiusculo("[^ABCDEFGHIJKLMNOPQRSTUVWXYZ]");
+    while(saida == false){
+        cout << "Digite qual busca deseja realizar agora com seus parametros, ou escreva SAIR para sair" << endl;
+        fflush(stdin);
+        getline(cin, entrada);
+        pos = entrada.find(" ");
+        bufferEntrada = entrada.substr(0, pos);
+        if (bufferEntrada == "SAIR"){
+            saida = true;
+        }
+        else if(bufferEntrada == "player"){
+            bufferEntrada = entrada.substr(pos + 1);
+            transform(bufferEntrada.begin(), bufferEntrada.end(), bufferEntrada.begin(), ::tolower);
+            bufferEntrada = regex_replace(bufferEntrada, AZ, "");
+            buscaNome(bufferEntrada, nomesPai, tabelaJog, tamanhoM);
+        }
+        else if(bufferEntrada == "user"){
+            bufferEntrada = entrada.substr(pos + 1);
+            temp = stoi(bufferEntrada);
+            buscaUser(temp, tabelaUsuario, tabelaJog, tamanhoU, tamanhoM);
+        }
+        else if(bufferEntrada == "tags"){
+            bufferEntrada = entrada.substr(pos + 1);
+            buscaTags(bufferEntrada, trieTags, tabelaJog, tamanhoM);
+        }
+        bufferEntrada = entrada.substr(0, 3);
+        if(bufferEntrada == "top"){
+            comando = entrada.substr(sizeof("top") - 1, pos);
+            temp = stoi(comando);
+            bufferEntrada = entrada.substr(pos + 1);
+            transform(bufferEntrada.begin(), bufferEntrada.end(), bufferEntrada.begin(), ::toupper);
+            bufferEntrada = regex_replace(bufferEntrada, maiusculo, "");
+            top(temp, bufferEntrada, tabelaJog, tamanhoM);
+        }
+    }
     return 0;
 }
